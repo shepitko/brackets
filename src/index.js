@@ -25,8 +25,12 @@ const check = (str, bracketsConfig) => {
   const strArray = str.split("");
 
   strArray.some((str) => {
-    const isStickOpen = result.filter(t => t === '|').length === 1;
     const pattern = bracketsConfig.find(config => str === config[0] || str === config[1]); // ['[', ']'']']
+    
+    if(!pattern.includes(str)) return true; // abort itterator
+
+    const isStickOpen = result.filter(t => t === '|').length === 1;
+    
 
     if(!result.length || (openBrakes.includes(str) && !(str === '|' && isStickOpen))) {
       result.push(str);
