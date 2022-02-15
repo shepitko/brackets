@@ -1,4 +1,4 @@
-const check = (str, bracketsConfig) => {
+module.exports = function check(str, bracketsConfig) {
   const brakets = {
     parenthesisOpen: '(',
     parenthesisClose: ')',
