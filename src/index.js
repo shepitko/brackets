@@ -10,7 +10,7 @@ module.exports = function check(str, bracketsConfig) {
     stickClose: '|'
   }
   
-  const openBrakes = [brakets.parenthesisOpen, brakets.squareBracketOpen, brakets.curlyBracketOpen, brakets.stickOpen ];
+  const openBrakes = [brakets.parenthesisOpen, brakets.squareBracketOpen, brakets.curlyBracketOpen, brakets.stickOpen, '1', '3', '5', '7', '8' ];
   
   const removeArrayItemByValue = (array, val) => {
     const index = array.indexOf(val);
@@ -30,14 +30,27 @@ module.exports = function check(str, bracketsConfig) {
     if(!pattern.includes(str)) return true; // abort itterator
 
     const isStickOpen = result.filter(t => t === '|').length === 1;
+    const isSevenOpen = result.filter(t => t === '7').length === 1;
+    const isEightOpen = result.filter(t => t === '8').length === 1;
     
 
     if(!result.length || (openBrakes.includes(str) && !(str === '|' && isStickOpen))) {
+      
+      if(str === '8' && result.includes('8')) {
+        removeArrayItemByValue(result, '8');
+        return
+      }
+
+      if(str === '7' && result.includes('7')){
+        removeArrayItemByValue(result, '7');
+        return
+      }
+
       result.push(str);
       return
     }
 
-    if((!openBrakes.includes(str) || (str === '|' && isStickOpen)) && !pattern.includes(result[result.length - 1])) {
+    if((!openBrakes.includes(str) || (str === '|' && isStickOpen) || (str === '7' && isSevenOpen) || (str === '8' && isEightOpen)) && !pattern.includes(result[result.length - 1])) {
       result.push(str);
       return true // abort itterator
     }
@@ -61,6 +74,22 @@ module.exports = function check(str, bracketsConfig) {
       removeArrayItemByValue(result, '|');
       return
     }
+    
+    if(str === '2' && result.includes('1')) {
+      removeArrayItemByValue(result, '1');
+      return
+    }
+
+    if(str === '4' && result.includes('3')) {
+      removeArrayItemByValue(result, '3');
+      return
+    }
+
+    if(str === '6' && result.includes('5')) {
+      removeArrayItemByValue(result, '5');
+      return
+    }
+
   })
 
   return Boolean(!result.length);
