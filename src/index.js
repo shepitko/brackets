@@ -20,7 +20,6 @@ const check = (str, bracketsConfig) => {
       indices.push(idx);
       idx = array.indexOf(val, idx + 1);
     }
-    debugger;
     array.splice(indices[indices.length - 1], 1);
   }
 
@@ -40,7 +39,6 @@ const check = (str, bracketsConfig) => {
     
 
     if(result[result.length - 1] && !openBrakes.includes(str) && !pattern.includes(result[result.length - 1]) && !((isStickOpen || str === '|') || isSevenOpen || isEightOpen)) {
-      debugger;
       result.push(str);
       
       return true; // abort itterator
