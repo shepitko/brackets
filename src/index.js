@@ -1,4 +1,4 @@
-module.exports = function check(str, bracketsConfig) {
+const check = (str, bracketsConfig) => {
   const brakets = {
     parenthesisOpen: '(',
     parenthesisClose: ')',
@@ -10,13 +10,18 @@ module.exports = function check(str, bracketsConfig) {
     stickClose: '|'
   }
   
-  const openBrakes = [brakets.parenthesisOpen, brakets.squareBracketOpen, brakets.curlyBracketOpen, brakets.stickOpen, '1', '3', '5', '7', '8' ];
+  const openBrakes = [brakets.parenthesisOpen, brakets.squareBracketOpen, brakets.curlyBracketOpen, '1', '3', '5', '7', '8' ];
   
   const removeArrayItemByValue = (array, val) => {
-    const index = array.indexOf(val);
-    if (index > -1) {
-      array.splice(index, 1); // 2nd parameter means remove one item only
+    var indices = [];
+    var idx = array.indexOf(val);
+
+    while (idx != -1) {
+      indices.push(idx);
+      idx = array.indexOf(val, idx + 1);
     }
+    debugger;
+    array.splice(indices[indices.length - 1], 1);
   }
 
 
@@ -29,19 +34,29 @@ module.exports = function check(str, bracketsConfig) {
     
     if(!pattern.includes(str)) return true; // abort itterator
 
-    const isStickOpen = result.filter(t => t === '|').length === 1;
-    const isSevenOpen = result.filter(t => t === '7').length === 1;
-    const isEightOpen = result.filter(t => t === '8').length === 1;
+    const isStickOpen = result.filter(t => t === '|').length % 2;
+    const isSevenOpen = result.filter(t => t === '7').length % 2;
+    const isEightOpen = result.filter(t => t === '8').length % 2;
     
 
-    if(!result.length || (openBrakes.includes(str) && !(str === '|' && isStickOpen))) {
+    if(result[result.length - 1] && !openBrakes.includes(str) && !pattern.includes(result[result.length - 1]) && !((isStickOpen || str === '|') || isSevenOpen || isEightOpen)) {
+      debugger;
+      result.push(str);
+      
+      return true; // abort itterator
+    }
+
+
+    if(!result.length || openBrakes.includes(str) || (str === '|' && !isStickOpen)) {
       
       if(str === '8' && result.includes('8')) {
+      if(result[result.length - 1] !== '8') return result.push(str);
         removeArrayItemByValue(result, '8');
         return
       }
 
       if(str === '7' && result.includes('7')){
+        if(result[result.length - 1] !== '7') return result.push(str);
         removeArrayItemByValue(result, '7');
         return
       }
@@ -49,11 +64,7 @@ module.exports = function check(str, bracketsConfig) {
       result.push(str);
       return
     }
-
-    if((!openBrakes.includes(str) || (str === '|' && isStickOpen) || (str === '7' && isSevenOpen) || (str === '8' && isEightOpen)) && !pattern.includes(result[result.length - 1])) {
-      result.push(str);
-      return true // abort itterator
-    }
+    
 
     if(str === ')' && result.includes('(')) {
       removeArrayItemByValue(result, '(');
@@ -66,11 +77,16 @@ module.exports = function check(str, bracketsConfig) {
     }
 
     if(str === '}' && result.includes('{')) {
-      removeArrayItemByValue(result, '{');
+      removeArrayItemByValue(result, '{')
+      // removeArrayItemByValue(result, '{');
       return
     }
     
     if(str === '|' && result.includes('|')) {
+      if(result[result.length - 1] !== '|') {
+        result.push(str);
+        return
+      }
       removeArrayItemByValue(result, '|');
       return
     }
@@ -94,3 +110,5 @@ module.exports = function check(str, bracketsConfig) {
 
   return Boolean(!result.length);
 }
+
+module.exports = check;
